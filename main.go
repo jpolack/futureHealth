@@ -1,11 +1,14 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
+
+	r.Use(cors.Default())
 
 	app := r.Group("/app")
 	app.POST("/login", func(c *gin.Context) {
