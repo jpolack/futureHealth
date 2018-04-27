@@ -1,11 +1,18 @@
 package main
 
 import (
+	"futureHealth/business"
+
+	"encoding/json"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	persistence := business.CreateJsonPersistence("./data/achievments.json")
+	handler := business.AchievmentHandler{&persistence}
+
 	r := gin.Default()
 
 	r.Use(cors.Default())
@@ -26,10 +33,19 @@ func main() {
 
 	admin := r.Group("/admin")
 	admin.GET("/achievments", func(c *gin.Context) {
-		c.JSON(200, "/achievments")
+		c.JSON(200, handler.Read())
 	})
-	admin.POST("/achievments", func(c *gin.Context) {
-		c.JSON(200, "/achievments")
+	admin.POST("/achievment", func(c *gin.Context) {
+		achiev := business.Achievment{}
+		bodyDecoder := json.NewDecoder(c.Request.Body)
+		err := bodyDecoder.Decode(&achiev)
+		if err != nil {
+			c.JSON(400, "Invalid JSON")
+			return
+		}
+
+		handler.Create(achiev)
+		c.JSON(200, "OK")
 	})
 	r.Run(":8000")
 }
