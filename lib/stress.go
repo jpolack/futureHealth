@@ -1,5 +1,7 @@
 package lib
 
+//DEPRECATED
+
 import (
 	"time"
 )
