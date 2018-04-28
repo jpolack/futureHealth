@@ -73,24 +73,24 @@ func main() {
 		c.JSON(200, userHandler.UserAchieved(achievments, userIdBlob.(string)))
 	})
 	app.POST("/runtastic", func(c *gin.Context) {
-		credentials := lib.Credentials{}
-		bodyDecoder := json.NewDecoder(c.Request.Body)
-		err := bodyDecoder.Decode(&credentials)
-		if err != nil {
-			c.JSON(400, "Invalid JSON")
-			return
-		}
+		// credentials := lib.Credentials{}
+		// bodyDecoder := json.NewDecoder(c.Request.Body)
+		// err := bodyDecoder.Decode(&credentials)
+		// if err != nil {
+		// 	c.JSON(400, "Invalid JSON")
+		// 	return
+		// }
 
-		userIdBlob, found := c.Get("userId")
-		if !found {
-			c.JSON(401, "Authentication required")
-		}
+		// userIdBlob, found := c.Get("userId")
+		// if !found {
+		// 	c.JSON(401, "Authentication required")
+		// }
 
-		err = userHandler.RuntasticLogin(credentials, userIdBlob.(string))
-		if err != nil {
-			c.JSON(400, "Invalid Login")
-			return
-		}
+		// err = userHandler.RuntasticLogin(credentials, userIdBlob.(string))
+		// if err != nil {
+		// 	c.JSON(400, "Invalid Login")
+		// 	return
+		// }
 		c.JSON(200, "OK")
 	})
 

@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"errors"
 	"futureHealth/api"
 
 	runtasticAPI "github.com/Metalnem/runtastic/api"
@@ -109,22 +108,23 @@ func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Pr
 	return achieved
 }
 func (h *UserHandler) RuntasticLogin(cred Credentials, userId string) error {
-	_, err := h.RunApi.ApiLogin(cred.Username, cred.Password)
-	if err != nil {
-		return err
-	}
+	// _, err := h.RunApi.ApiLogin(cred.Username, cred.Password)
+	// if err != nil {
+	// 	return err
+	// }
 
-	users := h.Pers.read()
-	foundUser, found := users[userId]
-	if !found {
-		return errors.New("user not found")
-	}
+	// users := h.Pers.read()
+	// foundUser, found := users[userId]
+	// if !found {
+	// 	return errors.New("user not found")
+	// }
 
-	foundUser.Runtastic = cred
+	// foundUser.Runtastic = cred
 
-	users[userId] = foundUser
+	// users[userId] = foundUser
 
-	h.Pers.save(users)
+	// h.Pers.save(users)
 
+	// return nil
 	return nil
 }
