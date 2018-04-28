@@ -1,4 +1,4 @@
-package business
+package user
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ type jsonPersistence struct {
 	path string
 }
 
-func (pers *jsonPersistence) read() []Achievment {
+func (pers *jsonPersistence) read() []User {
 	f, err := ioutil.ReadFile(pers.path)
 	if err != nil {
 		err = ioutil.WriteFile(pers.path, []byte("[]"), 0777)
@@ -26,7 +26,7 @@ func (pers *jsonPersistence) read() []Achievment {
 		}
 	}
 
-	achievs := []Achievment{}
+	achievs := []User{}
 	err = json.Unmarshal(f, &achievs)
 	if err != nil {
 		panic(err)
@@ -34,7 +34,7 @@ func (pers *jsonPersistence) read() []Achievment {
 	return achievs
 }
 
-func (pers *jsonPersistence) save(achievments []Achievment) {
+func (pers *jsonPersistence) save(achievments []User) {
 	bytes, err := json.Marshal(achievments)
 
 	err = ioutil.WriteFile(pers.path, bytes, 0777)

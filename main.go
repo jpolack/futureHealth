@@ -1,8 +1,8 @@
 package main
 
 import (
-	"futureHealth/business"
-	"futureHealth/login"
+	"futureHealth/achievment"
+	"futureHealth/user"
 
 	"encoding/json"
 
@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	persistence := business.CreateJsonPersistence("./data/achievments.json")
-	handler := business.AchievmentHandler{&persistence}
+	persistence := achievment.CreateJsonPersistence("./data/achievments.json")
+	handler := achievment.AchievmentHandler{&persistence}
 
 	r := gin.Default()
 
@@ -20,7 +20,7 @@ func main() {
 
 	app := r.Group("/app")
 	app.POST("/login", func(c *gin.Context) {
-		token := login.Login()
+		token := user.Login()
 		c.JSON(200, token)
 	})
 	app.GET("/achievments", func(c *gin.Context) {
@@ -39,7 +39,7 @@ func main() {
 		c.JSON(200, achievs)
 	})
 	admin.POST("/achievment", func(c *gin.Context) {
-		achiev := business.Achievment{}
+		achiev := achievment.Achievment{}
 		bodyDecoder := json.NewDecoder(c.Request.Body)
 		err := bodyDecoder.Decode(&achiev)
 		if err != nil {

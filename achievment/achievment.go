@@ -1,4 +1,4 @@
-package business
+package achievment
 
 import "github.com/google/uuid"
 
@@ -8,6 +8,7 @@ type Achievment struct {
 	Description string  `json:"description"`
 	Type        string  `json:"type"`
 	Value       float64 `json:"value"`
+	Points      int     `json:"points"`
 	Unit        string  `json:"unit"`
 }
 
