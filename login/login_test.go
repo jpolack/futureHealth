@@ -6,6 +6,6 @@ import (
 )
 
 func Test_Login_GetUuid(t *testing.T) {
-	uid := Login()
-	fmt.Println(uid)
+	token := Login()
+	fmt.Println(token)
 }

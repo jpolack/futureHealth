@@ -12,7 +12,7 @@ type Exercise struct {
 	Duration float64
 }
 
-func Login(username string, password string) (*api.Session, error) {
+func ApiLogin(username string, password string) (*api.Session, error) {
 	return api.Login(context.Background(), username, password)
 }
 

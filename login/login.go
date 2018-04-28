@@ -2,6 +2,10 @@ package login
 
 import "github.com/google/uuid"
 
-func Login() uuid.UUID {
-	return uuid.New()
+type LoginToken struct {
+	Token string `json:"token"`
+}
+
+func Login() LoginToken {
+	return LoginToken{uuid.New().String()}
 }
