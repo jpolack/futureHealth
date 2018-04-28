@@ -33,11 +33,7 @@ type UserHandler struct {
 	RunApi Runtastic
 }
 
-type LoginToken struct {
-	Token string `json:"token"`
-}
-
-func (h *UserHandler) Create() LoginToken {
+func (h *UserHandler) Create() string {
 	id := uuid.New().String()
 	users := h.Pers.read()
 	users[id] = User{
@@ -45,7 +41,7 @@ func (h *UserHandler) Create() LoginToken {
 		Achievments: make(map[string]Achievment),
 	}
 	h.Pers.save(users)
-	return LoginToken{id}
+	return id
 }
 
 type Point struct {
