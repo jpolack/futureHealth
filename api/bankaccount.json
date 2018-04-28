@@ -1,0 +1,34 @@
+{
+	"paymentProfileId": "dr76vsbzk4x3i7v36gqcuvba",
+    "amount": {
+      "amount": "10.00",
+      "currency": "EUR"
+    },
+    "language": "de",
+    "recipientText": "Runtastic 10km Challenge Bonus",
+    "recipientDetails": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.org",
+      "address": "John Doe Street",
+      "additionalAddress": "",
+      "postalCode": "12345",
+      "city": "TestCity",
+      "country": "DE",
+      "telephone": "+4912312345678"
+    },
+    "fallbackBankAccount": {
+      "accountHolder": "John",
+      "iban": "DE89370400440532013000",
+      "bic": "BIWYYYYYXXX"
+    },
+    "dueAt": "2018-04-30T14:35:33.274740859Z",
+    "contactMethod": "Export",
+    "securityQuestions": [
+      {
+        "question": "What was the name of your first pet?",
+        "answer": "Oscar"
+      }
+    ],
+    "remittanceInfo": "Lorem Ipsum"
+  }

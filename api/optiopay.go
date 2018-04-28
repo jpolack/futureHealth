@@ -9,7 +9,7 @@ import (
 type optioPayment struct{}
 
 func (op *optioPayment) CreatePayment() bool {
-	file, err := os.OpenFile("../data/bankaccount.json", os.O_RDWR, 0777)
+	file, err := os.OpenFile("bankaccount.json", os.O_RDWR, 0777)
 
 	if err != nil {
 		return false
