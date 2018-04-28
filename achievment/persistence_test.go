@@ -1,11 +1,20 @@
-package business
+package achievment
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
+func beforeEach() {
+	err := os.Remove("../data/test.json")
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestWriteRead(t *testing.T) {
+	beforeEach()
 	w := CreateJsonPersistence("../data/test.json")
 
 	achievs := []Achievment{
@@ -22,6 +31,7 @@ func TestWriteRead(t *testing.T) {
 	}
 }
 func TestEmptyRead(t *testing.T) {
+	beforeEach()
 	w := CreateJsonPersistence("../data/test.json")
 
 	a := w.read()
