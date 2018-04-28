@@ -1,4 +1,4 @@
-package achievment
+package lib
 
 import "github.com/google/uuid"
 

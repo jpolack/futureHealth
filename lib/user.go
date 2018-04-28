@@ -1,19 +1,25 @@
-package user
+package lib
 
 import (
-	"futureHealth/achievment"
+	"errors"
 	"futureHealth/api"
 
 	runtasticAPI "github.com/Metalnem/runtastic/api"
 	"github.com/google/uuid"
 )
 
-type User struct {
-	Id          string                  `json:"id"`
-	Achievments []achievment.Achievment `json:"achievments"`
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-type Persistence interface {
+type User struct {
+	Id          string       `json:"id"`
+	Achievments []Achievment `json:"achievments"`
+	Runtastic   Credentials  `json:"-"`
+}
+
+type UserPersistence interface {
 	read() map[string]User
 	save(users map[string]User)
 }
@@ -23,7 +29,7 @@ type Runtastic interface {
 }
 
 type UserHandler struct {
-	Pers   Persistence
+	Pers   UserPersistence
 	RunApi Runtastic
 }
 
@@ -36,7 +42,7 @@ func (h *UserHandler) Create() LoginToken {
 	users := h.Pers.read()
 	users[id] = User{
 		Id:          id,
-		Achievments: []achievment.Achievment{},
+		Achievments: []Achievment{},
 	}
 	h.Pers.save(users)
 	return LoginToken{id}
@@ -49,6 +55,7 @@ type Point struct {
 func (h *UserHandler) Points(userId string) Point {
 	users := h.Pers.read()
 	user, found := users[userId]
+
 	points := 0
 	if !found {
 		return Point{}
@@ -61,11 +68,11 @@ func (h *UserHandler) Points(userId string) Point {
 }
 
 type Progress struct {
-	achievment.Achievment
-	progress float64
+	Achievment
+	Progress float64 `json:"progress"`
 }
 
-func (h *UserHandler) UserAchieved(achievments []achievment.Achievment) []Progress {
+func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Progress {
 	session, err := h.RunApi.ApiLogin("g3483706@nwytg.com", "123456789")
 	if err != nil {
 		panic(err)
@@ -75,22 +82,50 @@ func (h *UserHandler) UserAchieved(achievments []achievment.Achievment) []Progre
 		panic(err)
 	}
 
+	users := h.Pers.read()
+	user := users[userId]
 	achieved := make([]Progress, len(achievments))
-	for i, achievs := range achievments {
-		prog := Progress{achievs, 0.0}
+	for i, achiev := range achievments {
+		prog := Progress{achiev, 0.0}
 		for _, ex := range exercise {
-			if achievs.Type == ex.Type {
-				switch achievs.Unit {
+			if achiev.Type == ex.Type {
+				switch achiev.Unit {
 				case "Kilometers":
-					prog.progress += float64(ex.Distance)
+					prog.Progress += float64(ex.Distance)
 				case "Calories":
-					prog.progress += float64(ex.Calories)
+					prog.Progress += float64(ex.Calories)
 				case "Minutes":
-					prog.progress += ex.Duration
+					prog.Progress += ex.Duration
 				}
 			}
 		}
 		achieved[i] = prog
+		if prog.Progress >= prog.Value {
+			user.Achievments = append(user.Achievments, achiev)
+			users[userId] = user
+		}
 	}
+	h.Pers.save(users)
+
 	return achieved
+}
+func (h *UserHandler) RuntasticLogin(cred Credentials, userId string) error {
+	_, err := h.RunApi.ApiLogin(cred.Username, cred.Password)
+	if err != nil {
+		return err
+	}
+
+	users := h.Pers.read()
+	foundUser, found := users[userId]
+	if !found {
+		return errors.New("user not found")
+	}
+
+	foundUser.Runtastic = cred
+
+	users[userId] = foundUser
+
+	h.Pers.save(users)
+
+	return nil
 }
