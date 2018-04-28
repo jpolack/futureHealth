@@ -35,7 +35,8 @@ func main() {
 
 	admin := r.Group("/admin")
 	admin.GET("/achievments", func(c *gin.Context) {
-		c.JSON(200, handler.Read())
+		achievs := handler.Read()
+		c.JSON(200, achievs)
 	})
 	admin.POST("/achievment", func(c *gin.Context) {
 		achiev := business.Achievment{}

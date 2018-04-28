@@ -16,7 +16,14 @@ type jsonPersistence struct {
 func (pers *jsonPersistence) read() []Achievment {
 	f, err := ioutil.ReadFile(pers.path)
 	if err != nil {
-		panic(err)
+		err = ioutil.WriteFile(pers.path, []byte("[]"), 0777)
+		if err != nil {
+			panic(err)
+		}
+		f, err = ioutil.ReadFile(pers.path)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	achievs := []Achievment{}
