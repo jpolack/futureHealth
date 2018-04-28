@@ -2,6 +2,7 @@ package main
 
 import (
 	"futureHealth/achievment"
+	"futureHealth/api"
 	"futureHealth/user"
 	"strings"
 
@@ -16,7 +17,8 @@ func main() {
 	achievHandler := achievment.AchievmentHandler{&achievPers}
 
 	userPersistence := user.CreateJsonPersistence("./data/users.json")
-	userHandler := user.UserHandler{&userPersistence}
+	runtasticApi := api.RuntasticApi{}
+	userHandler := user.UserHandler{&userPersistence, &runtasticApi}
 
 	r := gin.Default()
 
@@ -34,6 +36,9 @@ func main() {
 	app.Use(func(c *gin.Context) {
 		bearerToken := c.Request.Header.Get("Authorization")
 		token := strings.TrimPrefix(bearerToken, "Bearer ")
+		if token == "" {
+			return
+		}
 		c.Set("userId", token)
 	})
 	app.GET("/points", func(c *gin.Context) {
@@ -44,6 +49,7 @@ func main() {
 		c.JSON(200, userHandler.Points(userIdBlob.(string)))
 	})
 	app.GET("/achieved", func(c *gin.Context) {
+
 		c.JSON(200, "/achieved")
 	})
 

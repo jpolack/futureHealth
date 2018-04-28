@@ -13,11 +13,13 @@ type Exercise struct {
 	Type     string
 }
 
-func ApiLogin(username string, password string) (*api.Session, error) {
+type RuntasticApi struct{}
+
+func (r *RuntasticApi) ApiLogin(username string, password string) (*api.Session, error) {
 	return api.Login(context.Background(), username, password)
 }
 
-func GetExercises(session *api.Session) ([]Exercise, error) {
+func (r *RuntasticApi) GetExercises(session *api.Session) ([]Exercise, error) {
 	activities, err := session.GetActivities(context.Background())
 	if err != nil {
 		return nil, err

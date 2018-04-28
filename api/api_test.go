@@ -19,5 +19,5 @@ func Test_GetExercises(t *testing.T) {
 		t.Error(err)
 	}
 
-	fmt.Println("Result", act)
+	fmt.Printf("Result %#v\n", act)
 }
