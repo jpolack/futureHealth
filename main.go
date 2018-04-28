@@ -2,9 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"futureHealth/achievment"
 	"futureHealth/api"
-	"futureHealth/user"
+	"futureHealth/lib"
 	"strings"
 
 	"github.com/gin-contrib/cors"
@@ -12,12 +11,12 @@ import (
 )
 
 func main() {
-	achievPers := achievment.CreateJsonPersistence("./data/achievments.json")
-	achievHandler := achievment.AchievmentHandler{&achievPers}
+	achievPers := lib.CreateAchievmentPersistence("./data/achievments.json")
+	achievHandler := lib.AchievmentHandler{&achievPers}
 
-	userPersistence := user.CreateJsonPersistence("./data/users.json")
+	userPersistence := lib.CreateUserPersistence("./data/users.json")
 	runtasticApi := api.RuntasticApi{}
-	userHandler := user.UserHandler{&userPersistence, &runtasticApi}
+	userHandler := lib.UserHandler{&userPersistence, &runtasticApi}
 
 	r := gin.Default()
 
@@ -48,8 +47,33 @@ func main() {
 		c.JSON(200, userHandler.Points(userIdBlob.(string)))
 	})
 	app.GET("/achieved", func(c *gin.Context) {
+		userIdBlob, found := c.Get("userId")
+		if !found {
+			c.JSON(401, "Authentication required")
+		}
+		achievments := achievHandler.Read()
+		c.JSON(200, userHandler.UserAchieved(achievments, userIdBlob.(string)))
+	})
+	app.POST("/runtastic", func(c *gin.Context) {
+		credentials := lib.Credentials{}
+		bodyDecoder := json.NewDecoder(c.Request.Body)
+		err := bodyDecoder.Decode(&credentials)
+		if err != nil {
+			c.JSON(400, "Invalid JSON")
+			return
+		}
 
-		c.JSON(200, "/achieved")
+		userIdBlob, found := c.Get("userId")
+		if !found {
+			c.JSON(401, "Authentication required")
+		}
+
+		err = userHandler.RuntasticLogin(credentials, userIdBlob.(string))
+		if err != nil {
+			c.JSON(400, "Invalid Login")
+			return
+		}
+		c.JSON(200, "OK")
 	})
 
 	admin := r.Group("/admin")
@@ -58,7 +82,7 @@ func main() {
 		c.JSON(200, achievs)
 	})
 	admin.POST("/achievment", func(c *gin.Context) {
-		achiev := achievment.Achievment{}
+		achiev := lib.Achievment{}
 		bodyDecoder := json.NewDecoder(c.Request.Body)
 		err := bodyDecoder.Decode(&achiev)
 		if err != nil {
@@ -70,5 +94,5 @@ func main() {
 		c.JSON(200, "OK")
 	})
 
-	r.Run("")
+	r.Run(":8000")
 }

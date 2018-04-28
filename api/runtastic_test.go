@@ -6,15 +6,17 @@ import (
 )
 
 func Test_Login_CorrectUser_Passed(t *testing.T) {
-	_, err := ApiLogin("g3483706@nwytg.com", "123456789")
+	api := RuntasticApi{}
+	_, err := api.ApiLogin("g3483706@nwytg.com", "123456789")
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func Test_GetExercises(t *testing.T) {
-	session, _ := ApiLogin("g3483706@nwytg.com", "123456789")
-	act, err := GetExercises(session)
+	api := RuntasticApi{}
+	session, _ := api.ApiLogin("g3483706@nwytg.com", "123456789")
+	act, err := api.GetExercises(session)
 	if err != nil {
 		t.Error(err)
 	}
