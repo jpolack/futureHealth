@@ -10,8 +10,8 @@ type StressLevel struct {
 }
 
 type StressPersistence interface {
-	read() map[int]StressLevel
-	save(map[int]StressLevel)
+	read() []StressLevel
+	save([]StressLevel)
 }
 
 type StressLevelHandler struct {
@@ -19,5 +19,11 @@ type StressLevelHandler struct {
 }
 
 func (s *StressLevelHandler) Create(stress StressLevel, userId string) {
-
+	levels := s.Pers.read()
+	levels = append(levels, stress)
+	s.Pers.save(levels)
+}
+func (s *StressLevelHandler) Read() []StressLevel {
+	levels := s.Pers.read()
+	return levels
 }
