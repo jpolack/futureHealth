@@ -1,0 +1,8 @@
+---
+applications:
+- name: futureHealth
+  buildpack: go_buildpack
+  command: go main.go
+  memory: 128M
+  disk_quota: 128M
+  host: futureHealth
