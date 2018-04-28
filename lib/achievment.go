@@ -12,13 +12,13 @@ type Achievment struct {
 	Unit        string  `json:"unit"`
 }
 
-type Persistence interface {
+type AchievmentPersistence interface {
 	read() []Achievment
 	save([]Achievment)
 }
 
 type AchievmentHandler struct {
-	Pers Persistence
+	Pers AchievmentPersistence
 }
 
 func (h *AchievmentHandler) Create(achiev Achievment) {
