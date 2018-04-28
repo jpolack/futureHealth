@@ -14,9 +14,9 @@ type Credentials struct {
 }
 
 type User struct {
-	Id          string       `json:"id"`
-	Achievments []Achievment `json:"achievments"`
-	Runtastic   Credentials  `json:"-"`
+	Id          string                `json:"id"`
+	Achievments map[string]Achievment `json:"achievments"`
+	Runtastic   Credentials           `json:"-"`
 }
 
 type UserPersistence interface {
@@ -42,7 +42,7 @@ func (h *UserHandler) Create() LoginToken {
 	users := h.Pers.read()
 	users[id] = User{
 		Id:          id,
-		Achievments: []Achievment{},
+		Achievments: make(map[string]Achievment),
 	}
 	h.Pers.save(users)
 	return LoginToken{id}
@@ -84,8 +84,11 @@ func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Pr
 
 	users := h.Pers.read()
 	user := users[userId]
-	achieved := make([]Progress, len(achievments))
-	for i, achiev := range achievments {
+	achieved := []Progress{}
+	for _, achiev := range achievments {
+		if _, found := user.Achievments[achiev.Id]; found {
+			continue
+		}
 		prog := Progress{achiev, 0.0}
 		for _, ex := range exercise {
 			if achiev.Type == ex.Type {
@@ -99,9 +102,9 @@ func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Pr
 				}
 			}
 		}
-		achieved[i] = prog
+		achieved = append(achieved, prog)
 		if prog.Progress >= prog.Value {
-			user.Achievments = append(user.Achievments, achiev)
+			user.Achievments[achiev.Id] = achiev
 			users[userId] = user
 		}
 	}
