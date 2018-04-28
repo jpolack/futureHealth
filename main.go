@@ -2,6 +2,7 @@ package main
 
 import (
 	"futureHealth/business"
+	"futureHealth/login"
 
 	"encoding/json"
 
@@ -19,7 +20,8 @@ func main() {
 
 	app := r.Group("/app")
 	app.POST("/login", func(c *gin.Context) {
-		c.JSON(200, "/login")
+		token := login.Login()
+		c.JSON(200, token)
 	})
 	app.GET("/achievments", func(c *gin.Context) {
 		c.JSON(200, "/achievments")

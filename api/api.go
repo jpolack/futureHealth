@@ -12,7 +12,7 @@ type Exercise struct {
 	Duration float64
 }
 
-func Login(username string, password string) (*api.Session, error) {
+func ApiLogin(username string, password string) (*api.Session, error) {
 	return api.Login(context.Background(), username, password)
 }
 
@@ -23,13 +23,16 @@ func GetExercises(session *api.Session) ([]Exercise, error) {
 	}
 
 	exercises := []Exercise{}
+	availEx := map[string]int{"Running": 0}
 
 	for _, act := range activities {
-		exercises = append(exercises, Exercise{
-			Calories: act.Calories,
-			Distance: act.Distance,
-			Duration: act.Duration.Seconds(),
-		})
+		if _, ok := availEx[act.Type]; ok {
+			exercises = append(exercises, Exercise{
+				Calories: act.Calories,
+				Distance: act.Distance,
+				Duration: act.Duration.Seconds(),
+			})
+		}
 	}
 
 	return exercises, nil
