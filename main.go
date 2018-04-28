@@ -33,6 +33,10 @@ func main() {
 		achievs := achievHandler.Read()
 		c.JSON(200, achievs)
 	})
+	app.GET("/achievements", func(c *gin.Context) {
+		achievs := achievHandler.Read()
+		c.JSON(200, achievs)
+	})
 
 	app.Use(func(c *gin.Context) {
 		bearerToken := c.Request.Header.Get("Authorization")
@@ -57,6 +61,10 @@ func main() {
 		stressHandler.Create(stress, userIdBlob.(string))
 		c.JSON(200, "OK")
 	})
+	app.GET("/stress", func(c *gin.Context) {
+		stress := stressHandler.Read()
+		c.JSON(200, stress)
+	})
 	app.GET("/points", func(c *gin.Context) {
 		userIdBlob, found := c.Get("userId")
 		if !found {
@@ -72,25 +80,8 @@ func main() {
 		achievments := achievHandler.Read()
 		c.JSON(200, userHandler.UserAchieved(achievments, userIdBlob.(string)))
 	})
+
 	app.POST("/runtastic", func(c *gin.Context) {
-		// credentials := lib.Credentials{}
-		// bodyDecoder := json.NewDecoder(c.Request.Body)
-		// err := bodyDecoder.Decode(&credentials)
-		// if err != nil {
-		// 	c.JSON(400, "Invalid JSON")
-		// 	return
-		// }
-
-		// userIdBlob, found := c.Get("userId")
-		// if !found {
-		// 	c.JSON(401, "Authentication required")
-		// }
-
-		// err = userHandler.RuntasticLogin(credentials, userIdBlob.(string))
-		// if err != nil {
-		// 	c.JSON(400, "Invalid Login")
-		// 	return
-		// }
 		c.JSON(200, "OK")
 	})
 
@@ -110,10 +101,6 @@ func main() {
 
 		achievHandler.Create(achiev)
 		c.JSON(200, "OK")
-	})
-	admin.GET("/stress", func(c *gin.Context) {
-		stress := stressHandler.Read()
-		c.JSON(200, stress)
 	})
 
 	r.Run(":3000")
