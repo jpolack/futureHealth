@@ -6,4 +6,6 @@ WORKDIR $GOPATH/src/futureHealth
 
 RUN go build -o futureHealth . 
 
+EXPOSE 8080
+
 CMD ["./futureHealth"]
