@@ -1,12 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"futureHealth/achievment"
 	"futureHealth/api"
 	"futureHealth/user"
 	"strings"
-
-	"encoding/json"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -70,5 +69,6 @@ func main() {
 		achievHandler.Create(achiev)
 		c.JSON(200, "OK")
 	})
-	r.Run(":8000")
+
+	r.Run("")
 }
