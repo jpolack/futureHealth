@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"errors"
 	"futureHealth/api"
 
 	runtasticAPI "github.com/Metalnem/runtastic/api"
@@ -33,11 +32,7 @@ type UserHandler struct {
 	RunApi Runtastic
 }
 
-type LoginToken struct {
-	Token string `json:"token"`
-}
-
-func (h *UserHandler) Create() LoginToken {
+func (h *UserHandler) Create() string {
 	id := uuid.New().String()
 	users := h.Pers.read()
 	users[id] = User{
@@ -45,26 +40,22 @@ func (h *UserHandler) Create() LoginToken {
 		Achievments: make(map[string]Achievment),
 	}
 	h.Pers.save(users)
-	return LoginToken{id}
+	return id
 }
 
-type Point struct {
-	Count int `json:"count"`
-}
-
-func (h *UserHandler) Points(userId string) Point {
+func (h *UserHandler) Points(userId string) int {
 	users := h.Pers.read()
 	user, found := users[userId]
 
 	points := 0
 	if !found {
-		return Point{}
+		return points
 	}
 
 	for _, achiev := range user.Achievments {
 		points += achiev.Points
 	}
-	return Point{points}
+	return points
 }
 
 type Progress struct {
@@ -83,7 +74,10 @@ func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Pr
 	}
 
 	users := h.Pers.read()
-	user := users[userId]
+	user, found := users[userId]
+	if !found {
+		return []Progress{}
+	}
 	achieved := []Progress{}
 	for _, achiev := range achievments {
 		if _, found := user.Achievments[achiev.Id]; found {
@@ -111,24 +105,4 @@ func (h *UserHandler) UserAchieved(achievments []Achievment, userId string) []Pr
 	h.Pers.save(users)
 
 	return achieved
-}
-func (h *UserHandler) RuntasticLogin(cred Credentials, userId string) error {
-	_, err := h.RunApi.ApiLogin(cred.Username, cred.Password)
-	if err != nil {
-		return err
-	}
-
-	users := h.Pers.read()
-	foundUser, found := users[userId]
-	if !found {
-		return errors.New("user not found")
-	}
-
-	foundUser.Runtastic = cred
-
-	users[userId] = foundUser
-
-	h.Pers.save(users)
-
-	return nil
 }

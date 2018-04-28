@@ -12,9 +12,9 @@ type stressPersistence struct {
 	path string
 }
 
-func (pers *stressPersistence) read() map[int]StressLevel {
+func (pers *stressPersistence) read() []StressLevel {
 	bytes := Read(pers.path)
-	users := make(map[int]StressLevel)
+	users := []StressLevel{}
 
 	if len(bytes) == 0 {
 		pers.save(users)
@@ -28,7 +28,7 @@ func (pers *stressPersistence) read() map[int]StressLevel {
 	return users
 }
 
-func (pers *stressPersistence) save(users map[int]StressLevel) {
+func (pers *stressPersistence) save(users []StressLevel) {
 	bytes, err := json.Marshal(users)
 	if err != nil {
 		panic(err)

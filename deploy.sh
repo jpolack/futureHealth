@@ -1,0 +1,1 @@
+(go build -o futureHealth . && ./futureHealth) 2>> ./futureHealth.log
