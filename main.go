@@ -3,6 +3,7 @@ package main
 import (
 	"futureHealth/achievment"
 	"futureHealth/user"
+	"strings"
 
 	"encoding/json"
 
@@ -11,8 +12,11 @@ import (
 )
 
 func main() {
-	persistence := achievment.CreateJsonPersistence("./data/achievments.json")
-	handler := achievment.AchievmentHandler{&persistence}
+	achievPers := achievment.CreateJsonPersistence("./data/achievments.json")
+	achievHandler := achievment.AchievmentHandler{&achievPers}
+
+	userPersistence := user.CreateJsonPersistence("./data/users.json")
+	userHandler := user.UserHandler{&userPersistence}
 
 	r := gin.Default()
 
@@ -20,14 +24,24 @@ func main() {
 
 	app := r.Group("/app")
 	app.POST("/login", func(c *gin.Context) {
-		token := user.Login()
-		c.JSON(200, token)
+		c.JSON(200, userHandler.Create())
 	})
 	app.GET("/achievments", func(c *gin.Context) {
-		c.JSON(200, "/achievments")
+		achievs := achievHandler.Read()
+		c.JSON(200, achievs)
+	})
+
+	app.Use(func(c *gin.Context) {
+		bearerToken := c.Request.Header.Get("Authorization")
+		token := strings.TrimPrefix(bearerToken, "Bearer ")
+		c.Set("userId", token)
 	})
 	app.GET("/points", func(c *gin.Context) {
-		c.JSON(200, "/points")
+		userIdBlob, found := c.Get("userId")
+		if !found {
+			c.JSON(401, "Authentication required")
+		}
+		c.JSON(200, userHandler.Points(userIdBlob.(string)))
 	})
 	app.GET("/achieved", func(c *gin.Context) {
 		c.JSON(200, "/achieved")
@@ -35,7 +49,7 @@ func main() {
 
 	admin := r.Group("/admin")
 	admin.GET("/achievments", func(c *gin.Context) {
-		achievs := handler.Read()
+		achievs := achievHandler.Read()
 		c.JSON(200, achievs)
 	})
 	admin.POST("/achievment", func(c *gin.Context) {
@@ -47,7 +61,7 @@ func main() {
 			return
 		}
 
-		handler.Create(achiev)
+		achievHandler.Create(achiev)
 		c.JSON(200, "OK")
 	})
 	r.Run(":8000")

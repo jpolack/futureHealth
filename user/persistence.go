@@ -13,10 +13,10 @@ type jsonPersistence struct {
 	path string
 }
 
-func (pers *jsonPersistence) read() []User {
+func (pers *jsonPersistence) read() map[string]User {
 	f, err := ioutil.ReadFile(pers.path)
 	if err != nil {
-		err = ioutil.WriteFile(pers.path, []byte("[]"), 0777)
+		err = ioutil.WriteFile(pers.path, []byte("{}"), 0777)
 		if err != nil {
 			panic(err)
 		}
@@ -26,16 +26,16 @@ func (pers *jsonPersistence) read() []User {
 		}
 	}
 
-	achievs := []User{}
-	err = json.Unmarshal(f, &achievs)
+	users := make(map[string]User)
+	err = json.Unmarshal(f, &users)
 	if err != nil {
 		panic(err)
 	}
-	return achievs
+	return users
 }
 
-func (pers *jsonPersistence) save(achievments []User) {
-	bytes, err := json.Marshal(achievments)
+func (pers *jsonPersistence) save(users map[string]User) {
+	bytes, err := json.Marshal(users)
 
 	err = ioutil.WriteFile(pers.path, bytes, 0777)
 	if err != nil {
