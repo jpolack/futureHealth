@@ -23,9 +23,10 @@ func GetExercises(session *api.Session) ([]Exercise, error) {
 	}
 
 	exercises := []Exercise{}
+	availEx := map[string]int{"Running": 0}
 
 	for _, act := range activities {
-		if act.Type == "Running" {
+		if _, ok := availEx[act.Type]; ok {
 			exercises = append(exercises, Exercise{
 				Calories: act.Calories,
 				Distance: act.Distance,
