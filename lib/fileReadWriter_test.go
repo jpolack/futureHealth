@@ -7,6 +7,7 @@ import (
 )
 
 func removeFile() {
+	createFile("../data/test.json")
 	err := os.Remove("../data/test.json")
 	if err != nil {
 		panic(err)
