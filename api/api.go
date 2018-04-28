@@ -25,11 +25,13 @@ func GetExercises(session *api.Session) ([]Exercise, error) {
 	exercises := []Exercise{}
 
 	for _, act := range activities {
-		exercises = append(exercises, Exercise{
-			Calories: act.Calories,
-			Distance: act.Distance,
-			Duration: act.Duration.Seconds(),
-		})
+		if act.Type == "Running" {
+			exercises = append(exercises, Exercise{
+				Calories: act.Calories,
+				Distance: act.Distance,
+				Duration: act.Duration.Seconds(),
+			})
+		}
 	}
 
 	return exercises, nil
