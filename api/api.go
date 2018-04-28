@@ -10,6 +10,7 @@ type Exercise struct {
 	Calories int32
 	Distance int32
 	Duration float64
+	Type     string
 }
 
 func ApiLogin(username string, password string) (*api.Session, error) {
@@ -31,6 +32,7 @@ func GetExercises(session *api.Session) ([]Exercise, error) {
 				Calories: act.Calories,
 				Distance: act.Distance,
 				Duration: act.Duration.Seconds(),
+				Type:     act.Type,
 			})
 		}
 	}
